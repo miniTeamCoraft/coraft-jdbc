@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="insertMember">
+        INSERT INTO MEMBERS (
+                                MEM_ID
+                                , MEM_PWD
+                                , MEM_NAME
+                                , MEM_AGE
+                                , MEM_GENDER
+                                , PHONE
+                                , EMAIL
+                                , MEM_POINT
+                            )
+        VALUES (
+                    ?
+                    , ?
+                    , ?
+                    , ?
+                    , ?
+                    , ?
+                    , ?
+                    , ?
+                )
+    </entry>
+</properties>
