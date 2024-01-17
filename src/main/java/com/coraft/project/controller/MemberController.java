@@ -120,50 +120,15 @@ public class MemberController {
         String query = prop.getProperty("selectMemberInfo");
         PreparedStatement pstmt = null;
         ResultSet rset = null;
-        String userId = user.getId();
-        System.out.println(userId);
 
         try {
             pstmt = con.prepareStatement(query);
-/*            pstmt.setString(1, user.getId());
-            pstmt.setString(2, user.getPwd());
-            pstmt.setString(3, user.getName());
-            pstmt.setInt(4, user.getAge());
-            pstmt.setString(5, user.getGender());
-            pstmt.setString(6, user.getPhone());
-            pstmt.setString(7, user.getEmail());
-            pstmt.setInt(8, user.getPoint());*/
-            for(int i = 0; i < Login.members.size(); i++) {
-                if(Login.members.get(i).getId().equals(userId)) {
-                    pstmt.setString(1, Login.members.get(i).getName());
-                    pstmt.setInt(2, Login.members.get(i).getAge());
-                    pstmt.setString(3, Login.members.get(i).getGender());
-                    pstmt.setString(4, Login.members.get(i).getPhone());
-                    pstmt.setString(5, Login.members.get(i).getEmail());
-                    pstmt.setInt(6, Login.members.get(i).getPoint());
-                }
-            }
-            /*if(Login.members.) {
-                pstmt.setString(1, Login.members.get(1).getName());
-                pstmt.setInt(2, Login.members.get(2).getAge());
-                pstmt.setString(3, Login.members.get(3).getGender());
-                pstmt.setString(4, Login.members.get(4).getPhone());
-                pstmt.setString(5, Login.members.get(5).getEmail());
-                pstmt.setInt(6, Login.members.get(6).getPoint());
-            }*/
-            /*pstmt.setString(1, user.getName());
-            pstmt.setInt(2, user.getAge());
-            pstmt.setString(3, user.getGender());
-            pstmt.setString(4, user.getPhone());
-            pstmt.setString(5, user.getEmail());
-            pstmt.setInt(6, user.getPoint());*/
+            pstmt.setString(1, user.getId());
 
             rset = pstmt.executeQuery();
 
             while(rset.next()) {
                 System.out.println("\n= 회원정보 =========================================");
-                /*rset.getString("MEM_ID");
-                rset.getString("MEM_PWD");*/
                 System.out.println("이름 : " + rset.getString("MEM_NAME"));
                 System.out.println("나이 : " + rset.getInt("MEM_AGE") + "세");
                 System.out.println("성별 : " + rset.getString("MEM_GENDER"));
@@ -192,11 +157,10 @@ public class MemberController {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
+            close(rset);
             close(pstmt);
             close(con);
         }
-
-
 
     }
 

@@ -47,7 +47,7 @@
                 , EMAIL
                 , MEM_POINT
             FROM MEMBERS
-            <!--WHERE MEM_ID = ?-->
+            WHERE MEM_ID = ?
             <!--WHERE MEM_NAME = ?
                 AND MEM_AGE = ?
                 AND MEM_GENDER = ?
