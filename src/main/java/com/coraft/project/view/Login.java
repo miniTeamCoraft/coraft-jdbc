@@ -1,11 +1,17 @@
 package com.coraft.project.view;
 
 import com.coraft.project.controller.MemberController;
+import com.coraft.project.dto.LectureDTO;
 import com.coraft.project.dto.MemberDTO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Login {
+    public static ArrayList<MemberDTO> members = new ArrayList<>();
+    public static List<LectureDTO> lectures;
+
     public static MemberController memcont = new MemberController();
 
     Scanner sc = new Scanner(System.in);
@@ -44,7 +50,23 @@ public class Login {
         return new MemberDTO(id, pwd);
     }
 
-    public MemberDTO doRegist() {
+/*    public String doId() {
+        sc.nextLine();
+        System.out.print("아이디를 입력하세요 : ");
+        String id = sc.nextLine();
+
+        System.out.println("-------------------------------------------------");
+        return id;
+    }*/
+
+/*    public String doPwd() {
+        System.out.print("비밀번호를 입력하세요 : ");
+        String pwd = sc.nextLine();
+
+        return pwd;
+    }*/
+
+    public void doRegist() {
         System.out.println("\n= 회원가입 =========================================");
         String id = memcont.checkId();
         sc.nextLine();
@@ -95,6 +117,5 @@ public class Login {
             mainLogin();
         }*/
 
-        return user;
     }
 }

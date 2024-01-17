@@ -50,6 +50,16 @@ public class JDBCTemplate {
         }
     }
 
+    public static void close(PreparedStatement pstmt) {
+        try {
+            if(pstmt != null && !pstmt.isClosed()) {
+                pstmt.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void close(ResultSet rset) {
         try {
             if(rset != null && !rset.isClosed()) {

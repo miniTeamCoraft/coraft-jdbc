@@ -1,14 +1,15 @@
 package com.coraft.project.controller;
 
 import com.coraft.project.dto.MemberDTO;
+import com.coraft.project.view.Login;
 import com.coraft.project.view.Menu;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -16,21 +17,57 @@ import static com.coraft.project.common.JDBCTemplate.close;
 import static com.coraft.project.common.JDBCTemplate.getConnection;
 
 public class MemberController {
-    private static ArrayList<MemberDTO> members;
 
     Scanner sc = new Scanner(System.in);
     Menu menu = new Menu();
 
+    /* jdbc 연결 */
+    Connection con = getConnection();
+    int result = 0;
+    Properties prop = new Properties();
+    /* */
+
     public MemberController() {
-        members = new ArrayList<MemberDTO>();
-        members.add(new MemberDTO("id01", "pwd01", "홍길동", 25, "남", "010-1054-5078", "user01@mail.com", 100000));
-        members.add(new MemberDTO("id02", "pwd02", "김지윤", 21, "여", "010-3455-2343", "user02@mail.com", 50000));
-        members.add(new MemberDTO("id03", "pwd03", "김현지", 18, "여", "010-3864-7642", "user03@mail.com", 30000));
-        members.add(new MemberDTO("id04", "pwd04", "박다은", 45, "여", "010-2789-1087", "user04@mail.com", 10000));
+        try {
+            prop.loadFromXML(new FileInputStream("src/main/java/com/coraft/project/mapper/members-query.xml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void login(MemberDTO memberDTO) {
-        MemberDTO member = FindById(memberDTO.getId());
+    public void login(MemberDTO user) {
+        String query = prop.getProperty("selectIdPwd");
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        try {
+
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, user.getId());
+//            pstmt.setString(2, member.getPwd());
+
+            rset = pstmt.executeQuery();
+
+           if(rset.next()) {
+               if(rset.getString(1).equals(user.getId())) {
+                   menu.mainMenu(user);
+                   result = 1;
+               }else {
+                   result = -1;
+               }
+
+           }
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(rset);
+            close(pstmt);
+            close(con);
+        }
+
+        menu.mainMenu(user);
+       /* MemberDTO member = FindById(memberDTO.getId());
         if(member == null){
             System.out.println("등록되지 않은 ID입니다.");
         }else if(member.getPwd().equals(memberDTO.getPwd())) {
@@ -39,11 +76,11 @@ public class MemberController {
             menu.mainMenu(member);
         }else {
             System.out.println("비밀번호를 틀렸습니다.");
-        }
+        }*/
     }
 
     private MemberDTO FindById(String id) {
-        for(MemberDTO memberDTO : members) {
+        for(MemberDTO memberDTO : Login.members) {
             if(memberDTO.getId().equals(id)) {
                 return memberDTO;
             }
@@ -52,20 +89,10 @@ public class MemberController {
     }
 
     public int regist(MemberDTO user) {
-
-//        menu.mainMenu(user);
-
-        Connection con = getConnection();
-
+        String query = prop.getProperty("insertMember");
         PreparedStatement pstmt = null;
-        int result = 0;
-
-        Properties prop = new Properties();
 
         try {
-            prop.loadFromXML(new FileInputStream("src/main/java/com/coraft/project/mapper/members-query.xml"));
-            String query = prop.getProperty("insertMember");
-
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, user.getId());
             pstmt.setString(2, user.getPwd());
@@ -77,8 +104,6 @@ public class MemberController {
             pstmt.setInt(8, user.getPoint());
 
             result = pstmt.executeUpdate();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
@@ -88,34 +113,90 @@ public class MemberController {
 
         System.out.println(user.toString());
 
-        members.add(user);
-
         return result;
     }
 
     public void memberInfo(MemberDTO user) {
+        String query = prop.getProperty("selectMemberInfo");
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        String userId = user.getId();
+        System.out.println(userId);
 
-        System.out.println("\n= 회원정보 =========================================");
-        System.out.println("이름 : " + user.getName());
-        System.out.println("나이 : " + user.getAge() + "세");
-        System.out.println("성별 : " + user.getGender());
-        System.out.println("전화번호 : " + user.getPhone());
-        System.out.println("이메일 : " + user.getEmail());
-        System.out.println("포인트 : " + user.getPoint());
-        System.out.println("-------------------------------------------------");
-
-        while(true) {
-            System.out.print("메인으로 돌아갑니다. (Y / N) ");
-            char answer = sc.next().toUpperCase().charAt(0);
-
-            if(answer == 'Y') {
-                menu.mainMenu(user);
-            }else if(answer == 'N') {
-                memberInfo(user);
-            }else {
-                System.out.println("다시 입력해주세요");
+        try {
+            pstmt = con.prepareStatement(query);
+/*            pstmt.setString(1, user.getId());
+            pstmt.setString(2, user.getPwd());
+            pstmt.setString(3, user.getName());
+            pstmt.setInt(4, user.getAge());
+            pstmt.setString(5, user.getGender());
+            pstmt.setString(6, user.getPhone());
+            pstmt.setString(7, user.getEmail());
+            pstmt.setInt(8, user.getPoint());*/
+            for(int i = 0; i < Login.members.size(); i++) {
+                if(Login.members.get(i).getId().equals(userId)) {
+                    pstmt.setString(1, Login.members.get(i).getName());
+                    pstmt.setInt(2, Login.members.get(i).getAge());
+                    pstmt.setString(3, Login.members.get(i).getGender());
+                    pstmt.setString(4, Login.members.get(i).getPhone());
+                    pstmt.setString(5, Login.members.get(i).getEmail());
+                    pstmt.setInt(6, Login.members.get(i).getPoint());
+                }
             }
+            /*if(Login.members.) {
+                pstmt.setString(1, Login.members.get(1).getName());
+                pstmt.setInt(2, Login.members.get(2).getAge());
+                pstmt.setString(3, Login.members.get(3).getGender());
+                pstmt.setString(4, Login.members.get(4).getPhone());
+                pstmt.setString(5, Login.members.get(5).getEmail());
+                pstmt.setInt(6, Login.members.get(6).getPoint());
+            }*/
+            /*pstmt.setString(1, user.getName());
+            pstmt.setInt(2, user.getAge());
+            pstmt.setString(3, user.getGender());
+            pstmt.setString(4, user.getPhone());
+            pstmt.setString(5, user.getEmail());
+            pstmt.setInt(6, user.getPoint());*/
+
+            rset = pstmt.executeQuery();
+
+            while(rset.next()) {
+                System.out.println("\n= 회원정보 =========================================");
+                /*rset.getString("MEM_ID");
+                rset.getString("MEM_PWD");*/
+                System.out.println("이름 : " + rset.getString("MEM_NAME"));
+                System.out.println("나이 : " + rset.getInt("MEM_AGE") + "세");
+                System.out.println("성별 : " + rset.getString("MEM_GENDER"));
+                System.out.println("전화번호 : " + rset.getString("PHONE"));
+                System.out.println("이메일 : " + rset.getString("EMAIL"));
+                System.out.println("포인트 : " + rset.getInt("MEM_POINT"));
+                System.out.println("-------------------------------------------------");
+            }
+
+
+
+
+            while(true) {
+                System.out.print("메인으로 돌아갑니다. (Y / N) ");
+                char answer = sc.next().toUpperCase().charAt(0);
+
+                if(answer == 'Y') {
+                    menu.mainMenu(user);
+                }else if(answer == 'N') {
+                    memberInfo(user);
+                }else {
+                    System.out.println("다시 입력해주세요");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(pstmt);
+            close(con);
         }
+
+
 
     }
 
@@ -123,8 +204,8 @@ public class MemberController {
         System.out.print("아이디를 입력하세요 : ");
         String id = sc.nextLine();
 
-        for(int i = 0; i < members.size(); i++) {
-            if(members.get(i).getId().equals(id)) {
+        for(int i = 0; i < Login.members.size(); i++) {
+            if(Login.members.get(i).getId().equals(id)) {
                 System.out.println("중복된 아이디 입니다. 다시 입력해주세요.");
                 System.out.println("-------------------------------------------------");
                 return checkId();

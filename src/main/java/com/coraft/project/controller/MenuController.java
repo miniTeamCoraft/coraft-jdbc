@@ -2,6 +2,7 @@ package com.coraft.project.controller;
 
 import com.coraft.project.dto.LectureDTO;
 import com.coraft.project.dto.MemberDTO;
+import com.coraft.project.view.Login;
 import com.coraft.project.view.Payment;
 
 import java.util.ArrayList;
@@ -9,24 +10,23 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuController {
-    private List<LectureDTO> lectures;
     Scanner sc = new Scanner(System.in);
     Payment payment = new Payment();
 
     public MenuController() {
-        lectures = new ArrayList<LectureDTO>();
-        lectures.add(new LectureDTO("보컬 레슨 클래스", "2024년 1월 28일", "오후 6시30분 ~ 7시30분", 70000));
-        lectures.add(new LectureDTO("천연 비누 만들기 클래스", "2024년 1월 15일", "오후 3시 ~ 4시30분", 50000));
-        lectures.add(new LectureDTO("과자 만들기 클래스", "2024년 1월 20일", "오전 11시 ~ 오후 12시30분", 40000));
-        lectures.add(new LectureDTO("레진 손거울 만들기 클래스", "2024년 2월 3일", "오후 1시 ~ 3시", 30000));
-        lectures.add(new LectureDTO("전통 유리 공예 클래스", "2024년 2월 5일", "오후 1시30분 ~ 3시", 70000));
+        Login.lectures = new ArrayList<LectureDTO>();
+        Login.lectures.add(new LectureDTO("보컬 레슨 클래스", "2024년 1월 28일", "오후 6시30분 ~ 7시30분", 70000));
+        Login.lectures.add(new LectureDTO("천연 비누 만들기 클래스", "2024년 1월 15일", "오후 3시 ~ 4시30분", 50000));
+        Login.lectures.add(new LectureDTO("과자 만들기 클래스", "2024년 1월 20일", "오전 11시 ~ 오후 12시30분", 40000));
+        Login.lectures.add(new LectureDTO("레진 손거울 만들기 클래스", "2024년 2월 3일", "오후 1시 ~ 3시", 30000));
+        Login.lectures.add(new LectureDTO("전통 유리 공예 클래스", "2024년 2월 5일", "오후 1시30분 ~ 3시", 70000));
     }
 
     public void showListLecture(MemberDTO user) {
 
         System.out.println("\n= 강의목록 =========================================================================================");
-        for (int i = 0; i < lectures.size(); i++) {
-            System.out.println("강의 이름 : " + lectures.get(i).getLecName() + "  ||  날짜(시간) : " + lectures.get(i).getDate() + " ( " + lectures.get(i).getTime() + " )  ||  가격 : " + lectures.get(i).getLecPrice() + "원");
+        for (int i = 0; i < Login.lectures.size(); i++) {
+            System.out.println("강의 이름 : " + Login.lectures.get(i).getLecName() + "  ||  날짜(시간) : " + Login.lectures.get(i).getDate() + " ( " + Login.lectures.get(i).getTime() + " )  ||  가격 : " + Login.lectures.get(i).getLecPrice() + "원");
         }
         System.out.println("---------------------------------------------------------------------------------------------------");
 
@@ -60,24 +60,24 @@ public class MenuController {
 
             switch (num) {
                 case "1":
-                    System.out.println(lectures.get(0).toString());
-                    payment.mainPayment(user, lectures.get(0));
+                    System.out.println(Login.lectures.get(0).toString());
+                    payment.mainPayment(user, Login.lectures.get(0));
                     break;
                 case "2":
-                    System.out.println(lectures.get(1).toString());
-                    payment.mainPayment(user, lectures.get(1));
+                    System.out.println(Login.lectures.get(1).toString());
+                    payment.mainPayment(user, Login.lectures.get(1));
                     break;
                 case "3":
-                    System.out.println(lectures.get(2).toString());
-                    payment.mainPayment(user, lectures.get(2));
+                    System.out.println(Login.lectures.get(2).toString());
+                    payment.mainPayment(user, Login.lectures.get(2));
                     break;
                 case "4":
-                    System.out.println(lectures.get(3).toString());
-                    payment.mainPayment(user, lectures.get(3));
+                    System.out.println(Login.lectures.get(3).toString());
+                    payment.mainPayment(user, Login.lectures.get(3));
                     break;
                 case "5":
-                    System.out.println(lectures.get(4).toString());
-                    payment.mainPayment(user, lectures.get(4));
+                    System.out.println(Login.lectures.get(4).toString());
+                    payment.mainPayment(user, Login.lectures.get(4));
                     break;
                 case "9":
                     System.out.println("뒤로가기");
