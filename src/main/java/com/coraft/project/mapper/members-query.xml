@@ -38,9 +38,7 @@
     </entry>
 
     <entry key="selectMemberInfo">
-        SELECT <!--MEM_ID
-                , MEM_PWD-->
-                 MEM_NAME
+        SELECT MEM_NAME
                 , MEM_AGE
                 , MEM_GENDER
                 , PHONE
@@ -48,11 +46,11 @@
                 , MEM_POINT
             FROM MEMBERS
             WHERE MEM_ID = ?
-            <!--WHERE MEM_NAME = ?
-                AND MEM_AGE = ?
-                AND MEM_GENDER = ?
-                AND PHONE = ?
-                AND EMAIL = ?
-                AND MEM_POINT = ?-->
+    </entry>
+
+    <entry key="checkId">
+        SELECT MEM_ID
+            FROM MEMBERS
+            WHERE MEM_ID = ?
     </entry>
 </properties>

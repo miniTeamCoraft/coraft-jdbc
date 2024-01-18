@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="showAllLectures">
+        SELECT LEC_CODE
+        , LEC_NAME
+        , LEC_DATE
+        , LEC_TIME
+        , LEC_PRICE
+        FROM LECTURE_INFO
+    </entry>
+
+    <!--<entry key="selectLecture">
+        SELECT LEC_CODE
+        , LEC_NAME
+        , LEC_DATE
+        , LEC_TIME
+        , LEC_PRICE
+        FROM LECTURE_INFO
+    </entry>-->
+</properties>

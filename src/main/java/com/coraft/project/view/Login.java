@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Login {
     public static ArrayList<MemberDTO> members = new ArrayList<>();
-    public static List<LectureDTO> lectures;
+    public static List<LectureDTO> lectures = new ArrayList<>();
 
     public static MemberController memcont = new MemberController();
 
@@ -50,26 +50,10 @@ public class Login {
         return new MemberDTO(id, pwd);
     }
 
-/*    public String doId() {
-        sc.nextLine();
-        System.out.print("아이디를 입력하세요 : ");
-        String id = sc.nextLine();
-
-        System.out.println("-------------------------------------------------");
-        return id;
-    }*/
-
-/*    public String doPwd() {
-        System.out.print("비밀번호를 입력하세요 : ");
-        String pwd = sc.nextLine();
-
-        return pwd;
-    }*/
-
     public void doRegist() {
         System.out.println("\n= 회원가입 =========================================");
-        String id = memcont.checkId();
         sc.nextLine();
+        String id = memcont.checkId();
         System.out.print("비밀번호를 입력하세요 : ");
         String pwd = sc.nextLine();
         System.out.print("이름을 입력하세요 : ");
@@ -78,8 +62,8 @@ public class Login {
         int age = sc.nextInt();
         System.out.print("성별을 입력하세요 (여 / 남) : ");
         String gender = sc.next();
-        sc.nextLine();
         System.out.print("핸드폰 번호를 입력하세요(예시 : 010-0000-0000) : ");
+        sc.nextLine();
         String phone = sc.nextLine();
         System.out.print("이메일을 입력하세요 : ");
         String email = sc.nextLine();

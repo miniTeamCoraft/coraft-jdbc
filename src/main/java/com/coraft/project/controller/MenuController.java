@@ -5,41 +5,67 @@ import com.coraft.project.dto.MemberDTO;
 import com.coraft.project.view.Login;
 import com.coraft.project.view.Payment;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
+
+import static com.coraft.project.common.JDBCTemplate.close;
+import static com.coraft.project.common.JDBCTemplate.getConnection;
 
 public class MenuController {
     Scanner sc = new Scanner(System.in);
     Payment payment = new Payment();
 
+    Properties prop = new Properties();
+
     public MenuController() {
-        Login.lectures = new ArrayList<LectureDTO>();
-        Login.lectures.add(new LectureDTO("보컬 레슨 클래스", "2024년 1월 28일", "오후 6시30분 ~ 7시30분", 70000));
-        Login.lectures.add(new LectureDTO("천연 비누 만들기 클래스", "2024년 1월 15일", "오후 3시 ~ 4시30분", 50000));
-        Login.lectures.add(new LectureDTO("과자 만들기 클래스", "2024년 1월 20일", "오전 11시 ~ 오후 12시30분", 40000));
-        Login.lectures.add(new LectureDTO("레진 손거울 만들기 클래스", "2024년 2월 3일", "오후 1시 ~ 3시", 30000));
-        Login.lectures.add(new LectureDTO("전통 유리 공예 클래스", "2024년 2월 5일", "오후 1시30분 ~ 3시", 70000));
+        try {
+            prop.loadFromXML(new FileInputStream("src/main/java/com/coraft/project/mapper/lectures-query.xml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showListLecture(MemberDTO user) {
+        Connection con = getConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        String query = prop.getProperty("showAllLectures");
 
-        System.out.println("\n= 강의목록 =========================================================================================");
-        for (int i = 0; i < Login.lectures.size(); i++) {
-            System.out.println("강의 이름 : " + Login.lectures.get(i).getLecName() + "  ||  날짜(시간) : " + Login.lectures.get(i).getDate() + " ( " + Login.lectures.get(i).getTime() + " )  ||  가격 : " + Login.lectures.get(i).getLecPrice() + "원");
-        }
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        try {
+            pstmt = con.prepareStatement(query);
 
-        System.out.print("강의를 선택하시겠습니까? (Y / N) ");
-        char answer = sc.next().toUpperCase().charAt(0);
+            rset = pstmt.executeQuery();
 
-        if (answer == 'Y') {
-            selectLecture(user);
-        } else if (answer == 'N') {
-            System.out.println("이전 페이지로 돌아갑니다.");
-        } else {
-            System.out.println("잘못된 메뉴를 선택하셨습니다. 강의 목록으로 돌아갑니다.");
-            showListLecture(user);        
+            while (rset.next()) {
+                System.out.println("강의 이름 : " + rset.getString("LEC_NAME") + "  ||  날짜(시간) : " + rset.getString("LEC_DATE") + " ( " + rset.getString("LEC_TIME") + " )  ||  가격 : " + rset.getString("LEC_PRICE") + "원");
+            }
+            System.out.println("---------------------------------------------------------------------------------------------------");
+
+            System.out.print("강의를 선택하시겠습니까? (Y / N) ");
+            char answer = sc.next().toUpperCase().charAt(0);
+
+            if (answer == 'Y') {
+                selectLecture(user);
+            } else if (answer == 'N') {
+                System.out.println("이전 페이지로 돌아갑니다.");
+            } else {
+                System.out.println("잘못된 메뉴를 선택하셨습니다. 강의 목록으로 돌아갑니다.");
+            // showListLecture(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(rset);
+            close(pstmt);
+            close(con);
         }
     }
 
