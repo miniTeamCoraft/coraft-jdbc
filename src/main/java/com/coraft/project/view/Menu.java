@@ -8,10 +8,12 @@ import java.util.Scanner;
 import static com.coraft.project.view.Login.memcont;
 import static com.coraft.project.view.Login.paycont;
 
+
 public class Menu {
     Scanner sc = new Scanner(System.in);
+    public static MemberDTO user;
 
-    public void mainMenu(MemberDTO user) {
+    public void mainMenu() {
         while (true) {
             System.out.println("\n= 메인메뉴 =========================================");
             System.out.println("1.강의 목록 보기");

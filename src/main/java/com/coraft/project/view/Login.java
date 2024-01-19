@@ -23,7 +23,6 @@ public class Login {
             System.out.println("-------------------------------------------------");
             System.out.print("메뉴를 선택하세요 : ");
             String num = sc.next();
-            System.out.println("-------------------------------------------------");
 
             switch (num) {
                 case "1" : memcont.login(doLogin()); break;

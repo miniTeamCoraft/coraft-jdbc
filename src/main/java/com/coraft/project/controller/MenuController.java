@@ -15,6 +15,7 @@ import java.util.Scanner;
 
 import static com.coraft.project.common.JDBCTemplate.close;
 import static com.coraft.project.common.JDBCTemplate.getConnection;
+import static com.coraft.project.view.Menu.user;
 
 public class MenuController {
     Scanner sc = new Scanner(System.in);
@@ -50,7 +51,7 @@ public class MenuController {
             char answer = sc.next().toUpperCase().charAt(0);
 
             if (answer == 'Y') {
-                selectLecture(user);
+                selectLecture();
             } else if (answer == 'N') {
                 System.out.println("이전 페이지로 돌아갑니다.");
             } else {
@@ -65,7 +66,7 @@ public class MenuController {
         }
     }
 
-    public void selectLecture(MemberDTO user) {
+    public void selectLecture() {
         Connection con = getConnection();
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -102,7 +103,7 @@ public class MenuController {
 
                     System.out.println(userSelectLec);
 
-                    payment.mainPayment(user, userSelectLec);
+                    payment.mainPayment(userSelectLec);
                 }
 
                 if(num == 9) {

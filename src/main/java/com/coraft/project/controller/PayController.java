@@ -1,7 +1,6 @@
 package com.coraft.project.controller;
 
 import com.coraft.project.dto.LectureDTO;
-import com.coraft.project.dto.MemberDTO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +13,8 @@ import java.util.Scanner;
 
 import static com.coraft.project.common.JDBCTemplate.close;
 import static com.coraft.project.common.JDBCTemplate.getConnection;
+import static com.coraft.project.view.Login.memcont;
+import static com.coraft.project.view.Menu.user;
 
 public class PayController {
     Scanner sc = new Scanner(System.in);
@@ -28,7 +29,7 @@ public class PayController {
     }
 
     // 포인트 차감 결제
-    public void payBonusMember(MemberDTO user, LectureDTO lecture) {
+    public void payBonusMember(LectureDTO lecture) {
         Connection con = getConnection();
         PreparedStatement pstmt = null;
         int result = 0;
@@ -39,7 +40,7 @@ public class PayController {
             pstmt.setString(1, user.getId());
             pstmt.setInt(2, lecture.getLecCode());
 
-            usePayPoint(user, lecture);
+            usePayPoint(lecture);
 
             result = pstmt.executeUpdate();
 
@@ -58,7 +59,7 @@ public class PayController {
     }
 
     // 카드결제
-    public void payCardMember(MemberDTO user, LectureDTO lecture) {
+    public void payCardMember(LectureDTO lecture) {
         Connection con = getConnection();
         PreparedStatement pstmt = null;
         int result = 0;
@@ -69,7 +70,8 @@ public class PayController {
             pstmt.setString(1, user.getId());
             pstmt.setInt(2, lecture.getLecCode());
 
-            useCardPay(user, lecture);
+            System.out.println("####카드 결제 포인트 전####" + user.getPoint());
+            useCardPay(lecture);
             pay();
 
             result = pstmt.executeUpdate();
@@ -90,7 +92,7 @@ public class PayController {
         }
     }
 
-    public void usePayPoint(MemberDTO user, LectureDTO lecture) {
+    public void usePayPoint(LectureDTO lecture) {
         Connection con = getConnection();
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -102,11 +104,12 @@ public class PayController {
 
             rset = pstmt.executeQuery();
 
-            if(rset.next()) {
-                System.out.println("-------------------------------------------------");
-                System.out.println("CORAFT 규정에 따라 포인트차감 금액을 제외한 \n결제금액의 5%가 포인트로 적립됩니다.");
-                System.out.println("적립된 포인트는 다음 수강신청 시 사용하실 수 있습니다.");
-                System.out.println("-------------------------------------------------");
+            System.out.println("-------------------------------------------------");
+            System.out.println("CORAFT 규정에 따라 포인트차감 금액을 제외한 \n결제금액의 5%가 포인트로 적립됩니다.");
+            System.out.println("적립된 포인트는 다음 수강신청 시 사용하실 수 있습니다.");
+            System.out.println("-------------------------------------------------");
+
+            while(rset.next()) {
                 System.out.println(rset.getString("MEM_NAME") + "님의 결제금액은 " + rset.getInt("LEC_PRICE") + "원 입니다.");
                 System.out.println("보유하신 포인트는 " + rset.getInt("MEM_POINT") + "포인트 입니다.");
                 System.out.println("-------------------------------------------------");
@@ -116,21 +119,24 @@ public class PayController {
 
                 int payNewPrice = rset.getInt("LEC_PRICE") - usePoint;
                 if (payNewPrice > 0) {
-                int minusPoint = rset.getInt("MEM_POINT") - usePoint;
-                System.out.println(usePoint + "포인트 사용하여 " + minusPoint + "포인트 남았습니다.");
-                System.out.println("-------------------------------------------------");
-                System.out.println(usePoint + "포인트를 차감한 " + payNewPrice + "원은 자동 카드결제됩니다.");
-                int getPoint = (int) (payNewPrice * 0.05);
-                user.setPoint(minusPoint + getPoint);
-                pay();
+                    int minusPoint = rset.getInt("MEM_POINT") - usePoint;
+                    System.out.println(usePoint + "포인트 사용하여 " + minusPoint + "포인트 남았습니다.");
+                    System.out.println("-------------------------------------------------");
+                    System.out.println(usePoint + "포인트를 차감한 " + payNewPrice + "원은 자동 카드결제됩니다.");
+                    int getPoint = (int) (payNewPrice * 0.05);
+                    int upPoint = minusPoint + getPoint;
+                    pay();
+                    memcont.updatePoint(upPoint);
+                    break;
+                } else if (payNewPrice < 0) {
+                    System.out.println("포인트 사용 금액이 결제할 금액보다 많습니다. \n포인트를 다시 입력해 주세요"); ;
+                    usePayPoint(lecture);
+                } else {
+                    System.out.println(usePoint + "포인트를 사용하여 전액 포인트 결제 되었습니다.");
+                    System.out.println("####포인트 전액####" + user.getPoint());
 
-            } else if (payNewPrice < 0) {
-                System.out.println("포인트 사용 금액이 결제할 금액보다 많습니다. \n포인트를 다시 입력해 주세요"); ;
-                usePayPoint(user, lecture);
-            } else {
-                System.out.println(usePoint + "포인트를 사용하여 전액 포인트 결제 되었습니다.");
+                }
             }
-        }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -139,34 +145,9 @@ public class PayController {
             close(pstmt);
             close(con);
         }
-
-
-
-
-
-        /*System.out.print("사용하실 포인트를 입력해 주세요 : ");
-        int usePoint = sc.nextInt();
-
-        int payNewPrice = lecture.getLecPrice() - usePoint;
-        if (payNewPrice > 0) {
-            int minusPoint = user.getPoint() - usePoint;
-            System.out.println(usePoint + "포인트 사용하여 " + minusPoint + "포인트 남았습니다.");
-            System.out.println("-------------------------------------------------");
-            System.out.println(usePoint + "포인트를 차감한 " + payNewPrice + "원은 자동 카드결제됩니다.");
-            int getPoint = (int) (payNewPrice * 0.05);
-            user.setPoint(minusPoint + getPoint);
-            pay();
-
-        } else if (payNewPrice < 0) {
-            System.out.println("포인트 사용 금액이 결제할 금액보다 많습니다. \n포인트를 다시 입력해 주세요"); ;
-            usePayPoint(user, lecture);
-        } else {
-            System.out.println(usePoint + "포인트를 사용하여 전액 포인트 결제 되었습니다.");
-
-        }*/
     }
 
-    public void useCardPay(MemberDTO user, LectureDTO lecture) {
+    public void useCardPay(LectureDTO lecture) {
         Connection con = getConnection();
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -183,10 +164,9 @@ public class PayController {
                 System.out.println(rset.getString("MEM_NAME") + "님의 결제금액은 " + rset.getInt("LEC_PRICE") + "원 입니다.");
                 System.out.println("CORAFT 규정에 따라 결제금액의 5%인 " + getPoint + "포인트 적립됩니다.");
                 System.out.println("적립된 포인트는 다음 수강신청 시 사용하실 수 있습니다.");
-                user.setPoint(getPoint + rset.getInt("MEM_POINT"));
+                int upPoint = getPoint + rset.getInt("MEM_POINT");
+                memcont.updatePoint(upPoint);
             }
-
-
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -53,4 +53,10 @@
             FROM MEMBERS
             WHERE MEM_ID = ?
     </entry>
+
+    <entry key="updatePoint">
+        UPDATE MEMBERS
+            SET MEM_POINT = ?
+            WHERE MEM_ID = ?
+    </entry>
 </properties>
