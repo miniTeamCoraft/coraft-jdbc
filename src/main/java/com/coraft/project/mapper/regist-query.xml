@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="insertLecture">
+        INSERT REGIST (
+                        MEM_ID
+                        , LEC_CODE
+                        )
+        VALUES (
+                ?
+                , ?
+                )
+    </entry>
+
+    <entry key="showUserLecture">
+        SELECT l.LEC_CODE
+                , l.LEC_NAME
+                , l.LEC_DATE
+                , l.LEC_TIME
+                , l.LEC_PRICE
+            FROM REGIST r
+            JOIN LECTURE_INFO l ON r.LEC_CODE = l.LEC_CODE
+            WHERE r.MEM_ID = ?
+    </entry>
+</properties>

@@ -1,6 +1,7 @@
 package com.coraft.project.dto;
 
 public class LectureDTO {
+    private int lecCode;
     private String lecName;
     private String date;
     private String time;
@@ -8,11 +9,22 @@ public class LectureDTO {
 
     public LectureDTO() {}
 
-    public LectureDTO(String lecName, String date, String time, int lecPrice) {
+
+    public LectureDTO(int lecCode, String lecName, String date, String time, int lecPrice) {
+        this.lecCode = lecCode;
         this.lecName = lecName;
         this.date = date;
         this.time = time;
         this.lecPrice = lecPrice;
+    }
+
+
+    public int getLecCode() {
+        return lecCode;
+    }
+
+    public void setLecCode(int lecCode) {
+        this.lecCode = lecCode;
     }
 
     public String getLecName() {

@@ -2,83 +2,93 @@ package com.coraft.project.controller;
 
 import com.coraft.project.dto.LectureDTO;
 import com.coraft.project.dto.MemberDTO;
-import com.coraft.project.view.Menu;
 
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
 import java.util.Scanner;
 
+import static com.coraft.project.common.JDBCTemplate.close;
+import static com.coraft.project.common.JDBCTemplate.getConnection;
+
 public class PayController {
-
     Scanner sc = new Scanner(System.in);
-    Menu menu = new Menu();
+    Properties prop = new Properties();
 
-    public static ArrayList<LectureDTO> lec = new ArrayList<>();
+    public PayController() {
+        try {
+            prop.loadFromXML(new FileInputStream("src/main/java/com/coraft/project/mapper/regist-query.xml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // 포인트 차감 결제
-    public ArrayList<LectureDTO> payBonusMember(MemberDTO user, LectureDTO lecture) {
+    public void payBonusMember(MemberDTO user, LectureDTO lecture) {
+        Connection con = getConnection();
+        PreparedStatement pstmt = null;
+        int result = 0;
+        String query = prop.getProperty("insertLecture");
 
-        /*int getPoint = (int)(lecture.getLecPrice() * 0.05);
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, user.getId());
+            pstmt.setInt(2, lecture.getLecCode());
 
-        System.out.println("-------------------------------------------------");
-        System.out.println("CORAFT 규정에 따라 결제금액의 5%인 " + getPoint + "포인트 적립됩니다.");
-        System.out.println("적립된 포인트는 다음 수강신청 시 사용하실 수 있습니다.");
-        System.out.println("-------------------------------------------------");
-        System.out.println(user.getName() + "님의 결제금액은 " + lecture.getLecPrice() + "원 입니다.");
-        System.out.println("보유하신 포인트는 " + user.getPoint() + "포인트 입니다.");
+            usePayPoint(user, lecture);
 
-        int newPrice = lecture.getLecPrice() - user.getPoint();
+            result = pstmt.executeUpdate();
 
-        if(newPrice < 0 ) {
-            System.out.println("보유하신 포인트가 결제할 금액보다 많습니다.");
-            System.out.println("-------------------------------------------------");
-            System.out.print("사용하실 포인트를 입력해 주세요 : ");
-            int usePoint = sc.nextInt();
-
-            int minusPoint = user.getPoint() - usePoint;
-            System.out.println(usePoint + "포인트 사용하여 " + minusPoint + "포인트 남았습니다.");
-            System.out.println("-------------------------------------------------");
-
-            int usPrice = lecture.getLecPrice() - usePoint;
-            System.out.println("포인트를 차감한 "  + usPrice + "원은 자동 카드결제됩니다.");
-            System.out.println(". . .");
-            System.out.println("카드 결제가 완료되었습니다. ");
-            user.setPoint(getPoint + user.getPoint() - usePoint);
-
-        } else if (newPrice > 0) {
-            int usingPoint = lecture.getLecPrice() - user.getPoint();
-            System.out.println("포인트를 차감한 " + usingPoint + "원은 자동 카드결제됩니다.");
-            user.setPoint(getPoint);
-            pay();
-
-        } else if (newPrice == 0) {
-            System.out.println(user.getPoint() + "포인트 차감되었습니다.");
-            user.setPoint(getPoint);
-            System.out.println(". . .");
-            System.out.println("포인트로 결제 완료되었습니다.");
-        }*/
-        usePayPoint(user, lecture);
-
-        lec.add(new LectureDTO(lecture.getLecName(), lecture.getDate(), lecture.getTime(), lecture.getLecPrice()));
-        menu.mainMenu(user);
-
-        return lec;
-
+            if(result > 0) {
+                System.out.println("수강신청 성공했습니다.");
+                userSelectLec(user.getId());
+            }else {
+                System.out.println("수강신청 실패");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(pstmt);
+            close(con);
+        }
     }
 
     // 카드결제
-    public ArrayList<LectureDTO> payCardMember(MemberDTO user, LectureDTO lecture) {
+    public void payCardMember(MemberDTO user, LectureDTO lecture) {
+        Connection con = getConnection();
+        PreparedStatement pstmt = null;
+        int result = 0;
+        String query = prop.getProperty("insertLecture");
 
-        useCardPay(user, lecture);
-        pay();
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, user.getId());
+            pstmt.setInt(2, lecture.getLecCode());
 
-        lec.add(new LectureDTO(lecture.getLecName(), lecture.getDate(), lecture.getTime(), lecture.getLecPrice()));
-        menu.mainMenu(user);
+            useCardPay(user, lecture);
+            pay();
 
-        return lec;
+            result = pstmt.executeUpdate();
+
+            if(result > 0) {
+                System.out.println("수강신청 성공했습니다.");
+                userSelectLec(user.getId());
+            }else {
+                System.out.println("수강신청 실패");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(pstmt);
+            close(con);
+        }
     }
 
     public void usePayPoint(MemberDTO user, LectureDTO lecture) {
-
         System.out.println("-------------------------------------------------");
         System.out.println("CORAFT 규정에 따라 포인트차감 금액을 제외한 \n결제금액의 5%가 포인트로 적립됩니다.");
         System.out.println("적립된 포인트는 다음 수강신청 시 사용하실 수 있습니다.");
@@ -86,7 +96,6 @@ public class PayController {
         System.out.println(user.getName() + "님의 결제금액은 " + lecture.getLecPrice() + "원 입니다.");
         System.out.println("보유하신 포인트는 " + user.getPoint() + "포인트 입니다.");
         System.out.println("-------------------------------------------------");
-
 
         System.out.print("사용하실 포인트를 입력해 주세요 : ");
         int usePoint = sc.nextInt();
@@ -108,17 +117,14 @@ public class PayController {
             System.out.println(usePoint + "포인트를 사용하여 전액 포인트 결제 되었습니다.");
 
         }
-
     }
 
     public void useCardPay(MemberDTO user, LectureDTO lecture) {
         System.out.println(user.getName() + "님의 결제금액은 " + lecture.getLecPrice() + "원 입니다.");
-
         int getPoint = (int)(lecture.getLecPrice() * 0.05);
         System.out.println("CORAFT 규정에 따라 결제금액의 5%인 " + getPoint + "포인트 적립됩니다.");
         System.out.println("적립된 포인트는 다음 수강신청 시 사용하실 수 있습니다.");
         user.setPoint(getPoint + user.getPoint());
-
     }
 
     public void pay() {
@@ -128,16 +134,35 @@ public class PayController {
         System.out.println("카드 결제가 완료되었습니다. ");
     }
 
-    public void userSelectLec() {
-        System.out.println("\n[ 수강 내역 ]");
-        if(lec.isEmpty()) {
-            System.out.println("수강 신청 내역이 존재하지 않습니다.");
-        }else {
-            for(int i = 0; i < lec.size(); i++) {
-                System.out.println("강의 이름 : " + lec.get(i).getLecName() + " || 날짜 : " + lec.get(i).getDate() + " || 시간 : " + lec.get(i).getTime()  + " || 가격 : " + lec.get(i).getLecPrice() + "원");
+    public void userSelectLec(String id) {
+        Connection con = getConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        String query = prop.getProperty("showUserLecture");
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, id);
+
+            rset = pstmt.executeQuery();
+
+            System.out.println("\n[ 신청 내역 ]");
+            while(rset.next()) {
+                if(rset.getString("LEC_CODE").isEmpty()) {
+                    System.out.println("수강 신청 내역이 존재하지 않습니다.");
+                }else {
+                    System.out.println("강의 이름 : " + rset.getString("LEC_NAME")
+                                        + " || 날짜 : " + rset.getString("LEC_DATE")
+                                        + " || 시간 : " + rset.getString("LEC_TIME")
+                                        + " || 가격 : " + rset.getInt("LEC_PRICE") + "원");
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(rset);
+            close(pstmt);
+            close(con);
         }
     }
-
 }
 

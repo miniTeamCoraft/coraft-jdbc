@@ -1,12 +1,12 @@
 package com.coraft.project.view;
 
 import com.coraft.project.controller.MenuController;
-import com.coraft.project.controller.PayController;
 import com.coraft.project.dto.MemberDTO;
 
 import java.util.Scanner;
 
 import static com.coraft.project.view.Login.memcont;
+import static com.coraft.project.view.Login.paycont;
 
 public class Menu {
     Scanner sc = new Scanner(System.in);
@@ -26,8 +26,6 @@ public class Menu {
             Login login = new Login();
             MenuController lectcont = new MenuController();
 
-            PayController paycont = new PayController();
-
             switch (num) {
                 case "1":
                     lectcont.showListLecture(user);
@@ -35,12 +33,7 @@ public class Menu {
                 case "2":
                     memcont.memberInfo(user);
                     break;
-                case "3":
-                    try {
-                        paycont.userSelectLec();
-                    } catch (NullPointerException e) {
-                        System.out.println("수강 신청 내역이 없습니다.");
-                    }
+                case "3": paycont.userSelectLec(user.getId());
                     break;
                 case "9":
                     System.out.println("CORAFT를 로그아웃합니다. 감사합니다."); login.mainLogin(); break;

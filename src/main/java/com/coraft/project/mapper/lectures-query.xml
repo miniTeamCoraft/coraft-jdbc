@@ -3,19 +3,20 @@
 <properties>
     <entry key="showAllLectures">
         SELECT LEC_CODE
-        , LEC_NAME
-        , LEC_DATE
-        , LEC_TIME
-        , LEC_PRICE
-        FROM LECTURE_INFO
+                , LEC_NAME
+                , LEC_DATE
+                , LEC_TIME
+                , LEC_PRICE
+            FROM LECTURE_INFO
     </entry>
 
-    <!--<entry key="selectLecture">
+    <entry key="selectLecture">
         SELECT LEC_CODE
-        , LEC_NAME
-        , LEC_DATE
-        , LEC_TIME
-        , LEC_PRICE
-        FROM LECTURE_INFO
-    </entry>-->
+                , LEC_NAME
+                , LEC_DATE
+                , LEC_TIME
+                , LEC_PRICE
+            FROM LECTURE_INFO
+            WHERE LEC_CODE = ?
+    </entry>
 </properties>

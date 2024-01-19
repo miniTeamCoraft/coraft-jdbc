@@ -1,7 +1,6 @@
 package com.coraft.project.controller;
 
 import com.coraft.project.dto.MemberDTO;
-import com.coraft.project.view.Login;
 import com.coraft.project.view.Menu;
 
 import java.io.FileInputStream;
@@ -15,12 +14,10 @@ import java.util.Scanner;
 
 import static com.coraft.project.common.JDBCTemplate.close;
 import static com.coraft.project.common.JDBCTemplate.getConnection;
-import static com.coraft.project.view.Login.members;
 
 public class MemberController {
     Scanner sc = new Scanner(System.in);
     Menu menu = new Menu();
-
     Properties prop = new Properties();
 
     public MemberController() {
@@ -39,7 +36,6 @@ public class MemberController {
         int result = 0;
 
         try {
-
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, user.getId());
 
@@ -55,7 +51,6 @@ public class MemberController {
                }else {
                    result = -1;
                }
-
            }
 
            if(result > 0) {
@@ -72,7 +67,6 @@ public class MemberController {
             close(pstmt);
             close(con);
         }
-
     }
 
     public int regist(MemberDTO user) {
@@ -146,7 +140,6 @@ public class MemberController {
             close(pstmt);
             close(con);
         }
-
     }
 
     public String checkId() {
@@ -173,7 +166,6 @@ public class MemberController {
                         System.out.println("사용 가능한 아이디입니다.");
                     }
                 }
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }finally {

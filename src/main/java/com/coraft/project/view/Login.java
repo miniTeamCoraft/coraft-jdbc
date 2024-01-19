@@ -1,24 +1,21 @@
 package com.coraft.project.view;
 
 import com.coraft.project.controller.MemberController;
-import com.coraft.project.dto.LectureDTO;
+import com.coraft.project.controller.PayController;
 import com.coraft.project.dto.MemberDTO;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Login {
     public static ArrayList<MemberDTO> members = new ArrayList<>();
-    public static List<LectureDTO> lectures = new ArrayList<>();
-
     public static MemberController memcont = new MemberController();
+    public static PayController paycont = new PayController();
 
     Scanner sc = new Scanner(System.in);
 
     public void mainLogin() {
         System.out.println("=================================================");
-
         System.out.println("\n  CORAFT에 오신걸 환영합니다.😊");
         while(true) {
             System.out.println("\n= 로그인 =========================================");
@@ -26,7 +23,6 @@ public class Login {
             System.out.println("2.회원가입");
             System.out.println("9.종료");
             System.out.println("-------------------------------------------------");
-
             System.out.print("메뉴를 선택하세요 : ");
             String num = sc.next();
             System.out.println("-------------------------------------------------");
@@ -100,6 +96,5 @@ public class Login {
             System.out.println("잘못 입력하셨습니다. 로그인 페이지로 넘어갑니다.");
             mainLogin();
         }*/
-
     }
 }
