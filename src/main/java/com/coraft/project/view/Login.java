@@ -4,11 +4,9 @@ import com.coraft.project.controller.MemberController;
 import com.coraft.project.controller.PayController;
 import com.coraft.project.dto.MemberDTO;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Login {
-    public static ArrayList<MemberDTO> members = new ArrayList<>();
     public static MemberController memcont = new MemberController();
     public static PayController paycont = new PayController();
 
@@ -66,9 +64,6 @@ public class Login {
 
         System.out.println("-------------------------------------------------");
 
-/*        System.out.print("회원가입을 하시겠습니까? (Y / N) ");
-        char answer = sc.next().toUpperCase().charAt(0);*/
-
         MemberDTO user = new MemberDTO();
         user.setId(id);
         user.setPwd(pwd);
@@ -85,16 +80,5 @@ public class Login {
         }else {
             System.out.println("회원 등록 실패!");
         }
-
-        /*if(answer == 'Y') {
-            user = new MemberDTO(id, pwd, name, age, gender, phone, email);
-            System.out.println("\n축하드립니다!! 회원가입에 성공했습니다. 가입축하 5000포인트를 드렸습니다!");
-        }else if(answer == 'N') {
-            System.out.println("로그인 페이지로 넘어갑니다.");
-            mainLogin();
-        }else {
-            System.out.println("잘못 입력하셨습니다. 로그인 페이지로 넘어갑니다.");
-            mainLogin();
-        }*/
     }
 }

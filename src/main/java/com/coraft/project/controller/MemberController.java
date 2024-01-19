@@ -147,25 +147,31 @@ public class MemberController {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
         String query = prop.getProperty("checkId");
-
-        String id;
-
-            System.out.print("아이디를 입력하세요 : ");
-            id = sc.nextLine();
+        String id = "";
+        while(true) {
 
             try {
-                pstmt = con.prepareStatement(query);
-                pstmt.setString(1, id);
+                    System.out.print("아이디를 입력하세요 : ");
+                    id = sc.nextLine();
 
-                rset = pstmt.executeQuery();
-                while(rset.next()) {
-                    if (rset.getString("MEM_ID").equals(id)) {
-                        System.out.println("중복된 아이디입니다. 다시 입력해주세요");
+                    pstmt = con.prepareStatement(query);
+                    pstmt.setString(1, id);
 
-                    } else {
-                        System.out.println("사용 가능한 아이디입니다.");
+                    rset = pstmt.executeQuery();
+                    if (rset.next()) {
+                        if (rset.getString("MEM_ID") != null) {
+                            System.out.println("중복된 아이디입니다. 다시 입력해주세요.");
+                        } else {
+                            System.out.println("사용 가능한 아이디입니다."); break;
+                        }
                     }
-                }
+
+                    /*if (result > 0) {
+                        System.out.println("사용 가능한 아이디입니다.");
+                        break;
+                    } else {
+                        System.out.println("중복된 아이디입니다. 다시 입력해주세요");
+                    }*/
             } catch (SQLException e) {
                 e.printStackTrace();
             }finally {
@@ -173,7 +179,28 @@ public class MemberController {
                 close(pstmt);
                 close(con);
             }
+        }
 
         return id;
+        /*try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, id);
+
+            rset = pstmt.executeQuery();
+            while(rset.next()) {
+                if (rset.getString("MEM_ID").isEmpty()) {
+                    System.out.println("사용 가능한 아이디입니다.");
+                } else {
+                    System.out.println("중복된 아이디입니다. 다시 입력해주세요");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(rset);
+            close(pstmt);
+            close(con);
+
+        return id; */
     }
 }

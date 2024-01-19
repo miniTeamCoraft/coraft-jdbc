@@ -22,4 +22,14 @@
             JOIN LECTURE_INFO l ON r.LEC_CODE = l.LEC_CODE
             WHERE r.MEM_ID = ?
     </entry>
+
+    <entry key="userLecture">
+        SELECT m.MEM_NAME
+                , m.MEM_POINT
+                , l.LEC_PRICE
+            FROM REGIST r
+            JOIN MEMBERS m ON r.MEM_ID = m.MEM_ID
+            JOIN LECTURE_INFO l ON r.LEC_CODE = l.LEC_CODE
+            WHERE r.MEM_ID = ?
+    </entry>
 </properties>
