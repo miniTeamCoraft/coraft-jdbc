@@ -70,7 +70,6 @@ public class PayController {
             pstmt.setString(1, user.getId());
             pstmt.setInt(2, lecture.getLecCode());
 
-            System.out.println("####카드 결제 포인트 전####" + user.getPoint());
             useCardPay(lecture);
             pay();
 
