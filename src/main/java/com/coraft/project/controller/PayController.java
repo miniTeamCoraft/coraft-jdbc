@@ -133,8 +133,6 @@ public class PayController {
                     usePayPoint(lecture);
                 } else {
                     System.out.println(usePoint + "포인트를 사용하여 전액 포인트 결제 되었습니다.");
-                    System.out.println("####포인트 전액####" + user.getPoint());
-
                 }
             }
 

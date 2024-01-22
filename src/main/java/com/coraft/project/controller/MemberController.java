@@ -65,7 +65,7 @@ public class MemberController {
                 }
             }
             if (result > 0) {
-                System.out.println(user.getId() + "님 로그인에 성공했습니다 :)");
+                System.out.println(user.getName() + "님 로그인에 성공했습니다 :)");
                 menu.mainMenu();
             } else {
                 System.out.println("로그인에 실패했습니다.");
@@ -117,7 +117,6 @@ public class MemberController {
         try {
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, user.getId());
-            System.out.println(user.getId());
 
             rset = pstmt.executeQuery();
 
@@ -154,14 +153,15 @@ public class MemberController {
     }
 
     public String checkId() {
-        Connection con = getConnection();
-        PreparedStatement pstmt = null;
-        ResultSet rset = null;
-        String query = prop.getProperty("checkId");
-        String id = "";
+        while(true) {
+            Connection con = getConnection();
+            PreparedStatement pstmt = null;
+            ResultSet rset = null;
+            String query = prop.getProperty("checkId");
+            String id = "";
 
-        /*    try {
-                while(true) {
+            try {
+                Scanner sc = new Scanner(System.in);
                 System.out.print("아이디를 입력하세요 : ");
                 id = sc.nextLine();
 
@@ -169,61 +169,28 @@ public class MemberController {
                 pstmt.setString(1, id);
 
                 rset = pstmt.executeQuery();
-                if(rset.next()) {
-                    if (rset.getString("MEM_ID") != null) {
-                        System.out.println("중복된 아이디입니다. 다시 입력해주세요.");
-                    } else {
-                        System.out.println("사용 가능한 아이디입니다."); break;
+
+                if (rset.next()) {
+                    if (rset.getString("MEM_ID").equals(id)) {
+                        System.out.println("이미 사용 중인 아이디 입니다. 다시 입력해주세요.");
                     }
+                } else {
+                    System.out.println("사용 가능한 아이디 입니다."); return id;
                 }
-                    if (result > 0) {
-                        System.out.println("사용 가능한 아이디입니다.");
-                        break;
-                    } else {
-                        System.out.println("중복된 아이디입니다. 다시 입력해주세요");
-                    }
-            }
+
             } catch (SQLException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 close(rset);
                 close(pstmt);
                 close(con);
             }
-
-
-        return id;*/
-
-
-        try {
-            System.out.print("아이디를 입력하세요 : ");
-            id = sc.nextLine();
-
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, id);
-
-            rset = pstmt.executeQuery();
-            while (rset.next()) {
-                if (rset.getString("MEM_ID").isEmpty()) {
-                    System.out.println("사용 가능한 아이디입니다.");
-                } else {
-                    System.out.println("중복된 아이디입니다. 다시 입력해주세요");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            close(rset);
-            close(pstmt);
-            close(con);
         }
-        return id;
-
     }
 
     public void updatePoint(int upPoint) {
         Connection con = getConnection();
-        PreparedStatement pstmt  = null;
+        PreparedStatement pstmt = null;
         int result = 0;
         String query = prop.getProperty("updatePoint");
 
@@ -234,14 +201,14 @@ public class MemberController {
 
             result = pstmt.executeUpdate();
 
-            if(result > 0) {
+            if (result > 0) {
                 System.out.println("포인트 업데이트 성공");
-            }else {
+            } else {
                 System.out.println("포인트 업데이트 실패");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             close(pstmt);
             close(con);
         }
